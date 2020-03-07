@@ -1,0 +1,4 @@
+DriverType=FIREFOX
+geckodriverpath=C:\\Automation\\Workspace\\QAAutomation_Test\\src\\libs\\BrowserDrivers\\geckodriver\\geckodriver.exe
+chromedriverpath=C:\Automation\\Workspace\\QAAutomation_Test\\src\\libs\\BrowserDrivers\\Chrome\\chromedriver.exe
+BaseURL=https://www.google.com/

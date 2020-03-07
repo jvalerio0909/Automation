@@ -1,0 +1,5 @@
+DriverType=FIREFOX
+geckodriverpath=C:\\Automation\\BrowserDrivers\\geckodriver\\geckodriver.exe
+chromedriverpath=C:\\Automation\\BrowserDrivers\\Chrome\\chromedriver.exe
+BaseURL=https://vacations-management.herokuapp.com/users/sign_in
+ReportsPath=C:\\Reports

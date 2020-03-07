@@ -1,0 +1,7 @@
+Feature: Test Users
+
+Scenario: Do login in the application
+	Given I am a user
+	And I enter to application
+	When I make login with username and password
+	Then the login is successful

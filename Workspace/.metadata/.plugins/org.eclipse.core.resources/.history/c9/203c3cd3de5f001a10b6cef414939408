@@ -1,0 +1,6 @@
+Feature: Test Users
+
+Scenario: Do login in the application
+	Given Open the browser and start application
+	When I enter a valid username and a valid password
+	Then user should do login successfully

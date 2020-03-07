@@ -1,0 +1,356 @@
+package Utilities;
+
+import java.awt.AWTException;
+import java.awt.Robot;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.event.KeyEvent;
+//conexion de archivos
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.SecureRandom;
+import java.util.*;
+
+import org.apache.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+//web driver
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.support.ui.Select;
+import org.testng.Assert;
+
+//conexion mysql
+//import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+//conexion excel
+import jxl.Sheet;
+import jxl.Workbook;
+import jxl.read.biff.BiffException;
+
+
+public class Utilities {
+	private static final LocalDateTime time= LocalDateTime.now(); 
+	private DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH.mm.ss");
+	private final String path = "C:\\Automation\\Workspace\\QAAutomation_Test\\src\\Reports\\";
+	private static final Random generator = new Random();
+	static final String SOURCE = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	static SecureRandom secureRnd = new SecureRandom();
+
+	 
+	public static WebDriver driver;
+	static {
+		driver = getDriver();
+	}
+
+	public static WebDriver getDriver() {
+	
+		try {
+			Properties obj = new Properties();   
+			//Create Object of FileInputStream Class. Pass file path.
+			FileInputStream objfile = new FileInputStream(System.getProperty("user.dir")+"\\src\\config.properties");
+			//Pass object reference objfile to load method of Properties object.
+			obj.load(objfile);
+			
+		
+			switch(obj.getProperty("DriverType")) {
+			case "CHROME" :
+				System.setProperty("webdriver.chrome.driver", "C:\\Automation\\Workspace\\QAAutomation_Test\\src\\libs\\BrowserDrivers\\Chrome\\chromedriver.exe");
+				ChromeOptions chromeOptions= new ChromeOptions();
+				chromeOptions.addArguments("--start-maximized");				
+				driver= new ChromeDriver(chromeOptions);
+				driver.manage().window().maximize();
+				break;
+				
+			case "FIREFOX": 				
+				System.setProperty("webdriver.gecko.driver", "C:\\Automation\\Workspace\\QAAutomation_Test\\src\\libs\\BrowserDrivers\\geckodriver\\geckodriver.exe");
+				FirefoxOptions dc = new FirefoxOptions(); 
+				dc.setCapability("marionette", true);
+				dc.addArguments("--lang=en-US");
+				driver = new FirefoxDriver(dc);
+				driver.manage().window().maximize();
+				break;
+			}
+			}catch(Exception e){
+				
+			}
+		return driver;
+		
+	}
+	
+
+	public static void esperar(int tiempo) {
+		try {
+			Thread.sleep(tiempo);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
+
+	public ArrayList<String> vector(String inputTestCase) {
+		ArrayList<String> mivector = new ArrayList<String>();
+		try {
+			Workbook workbook = Workbook.getWorkbook(new File("C:\\AutomationTYA\\TYA.xls"));
+			Sheet sheet = workbook.getSheet(inputTestCase);
+			int indiceColumnaLeer = sheet.getColumns();
+			int indiceFilas = sheet.getRows();
+			System.out.println("Sheet de Test Case: " + sheet.getName());
+			System.out.println("col: " + indiceColumnaLeer + ",Fil: " + indiceFilas);
+			for (int columna = 1; columna <= indiceColumnaLeer - 1; columna++) {
+				for (int fila = 1; fila <= indiceFilas - 1; fila++) {
+					mivector.add(sheet.getCell(columna, fila).getContents());
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("Ocurrio un error" + e.getMessage());
+		}
+		return mivector;
+	}
+	
+	
+	public  ArrayList<String> getFirstRow(String inputTestCase) {
+		ArrayList<String> firstRow = new ArrayList<String>();
+		try {
+			Workbook workbook = Workbook.getWorkbook(new File("C:\\AutomationTYA\\TYA.xls"));
+			Sheet sheet = workbook.getSheet(inputTestCase);
+			int indiceColumnaLeer = sheet.getColumns();
+			int indiceFilas = sheet.getRows();
+			System.out.println("Sheet de Test Case: " + sheet.getName());
+			System.out.println("col: " + indiceColumnaLeer + ",Fil: " + indiceFilas);
+			int fila = 1;
+			for (int columna = 1; columna <= indiceColumnaLeer - 1; columna++) {
+				firstRow.add(sheet.getCell(columna,fila).getContents());
+			}
+		} catch (Exception e) {
+			System.out.println("Ocurrio un error" + e.getMessage());
+		}
+		return firstRow;
+	}
+
+	
+	
+
+	
+	public void accionarRobotFirma1() throws AWTException {
+		Robot robot = new Robot();
+		robot.keyPress(KeyEvent.VK_ENTER);
+		robot.keyPress(KeyEvent.VK_ENTER);
+		esperar(9000);
+		robot.keyPress(KeyEvent.VK_1);
+		esperar(200);
+		robot.keyPress(KeyEvent.VK_1);
+		esperar(200);
+		robot.keyPress(KeyEvent.VK_2);
+		esperar(200);
+		robot.keyPress(KeyEvent.VK_6);
+		esperar(500);
+		robot.keyPress(KeyEvent.VK_ENTER);
+
+	}
+	
+	
+	
+	public void CopyElement(String var) {
+		// This represents a cut-copy (Ctrl+X/Ctrl+C) operation.
+		// The text will be copied to the clipboard
+		// StringSelection is a Transferable implementation
+		StringSelection data = new StringSelection(var);
+		Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
+		cb.setContents(data, data);
+
+		// This represents the paste (Ctrl+V) operation
+		try {
+			Transferable t = cb.getContents(null);
+			if (t.isDataFlavorSupported(DataFlavor.stringFlavor))
+				System.out.println(t.getTransferData(DataFlavor.stringFlavor));
+		} catch (UnsupportedFlavorException | IOException ex) {
+			System.out.println("No se realizo la operacion.");
+		}
+	}
+	
+	
+	//////////////////////////// Métodos personalizados ///////////////////////////
+	
+	// esperar 
+	
+	public void wait(int tiempo) {
+		esperar (tiempo);
+	}
+
+	// Seleccionar valor en  el combo
+
+	public void SelectComboBox (WebElement comboB, String valor) {
+		Select combo= new Select(comboB);
+		combo.selectByValue(valor);
+	}
+	
+	
+	// método personalizado para leer datos excel
+	public String[][] getExcelData(String fileName, String sheetName) {
+		String[][] arrayExcelData = null;
+		try {
+			FileInputStream fs = new FileInputStream(fileName);
+			Workbook wb = Workbook.getWorkbook(fs);
+			Sheet sh = wb.getSheet(sheetName);
+			int totalNoOfCols = sh.getColumns();
+			int totalNoOfRows = sh.getRows();
+			arrayExcelData = new String[totalNoOfRows - 1][totalNoOfCols];
+			for (int i = 1; i < totalNoOfRows; i++) {
+				for (int j = 0; j < totalNoOfCols; j++) {
+					arrayExcelData[i - 1][j] = sh.getCell(j, i).getContents();
+				}
+
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+			e.printStackTrace();
+		} catch (BiffException e) {
+			e.printStackTrace();
+		}
+		return arrayExcelData;
+	}
+	
+	 /**
+	 * Remove a row by its index
+	 * @param sheet a Excel sheet
+	 * @param rowIndex a 0 based index of removing row
+	 */
+	public void removeRow(String inputTestCase, int rowIndex) {
+		
+		InputStream is;
+		try {
+			is = new FileInputStream("C:\\AutomationTYA\\TYA.xls");
+			HSSFWorkbook workbook;
+			workbook = new HSSFWorkbook(is);
+			HSSFSheet sheet = workbook.getSheet(inputTestCase);
+	        int lastRowNum=sheet.getLastRowNum();
+	        if(rowIndex>=0&&rowIndex<lastRowNum){
+	            sheet.shiftRows(rowIndex+1,lastRowNum, -1);
+	        }
+	        if(rowIndex==lastRowNum){
+	            HSSFRow removingRow=sheet.getRow(rowIndex);
+	            if(removingRow!=null){
+	                sheet.removeRow(removingRow);
+	            }
+	        }
+	        is.close();
+	        FileOutputStream output_file = new FileOutputStream(new File("C:\\AutomationTYA\\TYA.xls"));
+	        workbook.write(output_file);
+		    workbook.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	
+	public String getPath() {
+		return path + dtf.format(time)+"\\";
+	}
+	
+	public void logError(String test, String message, Logger log,int step, int subStep) {
+		String concatenated;
+		if(subStep==0) {
+			concatenated= String.valueOf(step);
+		}else {
+			concatenated = step+"."+subStep;
+		}
+		
+		logError(test, message, log, concatenated);
+	}
+	
+	public void logError(String test, String message, Logger log,int step) {
+		logError(test, message, log, String.valueOf(step));
+	}
+	
+	public void logError(String test, String message, Logger log,String step) {
+		log.error("-----Step "+step+" NOT OK------"+"\n");
+		log.error("-----Begin Error Msg------");
+		log.error(message);
+		log.error("-----End Error Msg------"+"\n");
+		log.info("-----TYA"+test+" Failed------"+"\n"+"\n");
+		Assert.fail(message);
+		 
+	}
+	
+	
+	public void logInfo(String type,int step,int subStep, Logger log) {
+		String concatenated = step+"."+subStep;
+		logInfo(type,concatenated,log);
+		
+	}
+	
+	public void logInfo(String type,int step, Logger log) {
+		logInfo(type,String.valueOf(step),log);
+		
+	}
+	
+	
+	
+	public void logInfo(String type,String msj, Logger log) {
+		switch(type){
+			case "info":
+				log.info("-----Step "+msj+" : OK------");
+				break;
+			case "inicio":
+				log.info("-----TYA"+msj+" Started------"+"\n");
+				break;
+			case "fin":
+				log.info("-----TYA"+msj+" Passed------"+"\n"+"\n");
+				break;
+			default:
+				log.info(msj);
+				break;
+		}
+	}
+	
+	
+	public void scrollDown() {
+		JavascriptExecutor jsx = (JavascriptExecutor)driver;
+		jsx.executeScript("window.scrollTo(0, document.body.scrollHeight)");
+	}
+	
+
+	public void waitForContent(WebElement webElement, String attribute) {
+		int i=0;
+		String text;
+		  while(i<90) {
+			  text=webElement.getAttribute(attribute);
+			  if(text.equals("")) {
+				  wait(1000);
+				  i++;
+			  }else {
+				  break;
+			  }
+		  }
+	}
+	
+	
+	
+}

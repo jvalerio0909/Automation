@@ -1,0 +1,30 @@
+package PageObjects;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+
+import Utilities.Utilities;
+
+public class NewEmployeePOM extends Utilities {
+	
+	public WebElement firstNameTxt() {
+		return driver.findElement(By.id("employee_first_name"));
+	}
+	
+	public WebElement lastNameTxt() {
+		return driver.findElement(By.id("employee_last_name"));
+	}
+	
+	public WebElement emailTxt() {
+		return driver.findElement(By.id("employee_email"));
+	}
+	
+	public WebElement idTxt() {
+		return driver.findElement(By.id("employee_identification"));
+	}
+	
+	public WebElement leaderNameTxt() {
+		return driver.findElement(By.id("employee_identification"));
+	}
+
+}

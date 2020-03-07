@@ -1,0 +1,14 @@
+--LoginTest--
+Username=gap-automation-test@mailinator.com
+Password=12345678
+AccountName=gap
+
+--CreateUserTest--
+Firstname=James
+Lastname=Smith
+Email=jsmith@gmail.com
+Identification=1234567890
+LeaderName=Juliana Valerio Villalobos
+Year=2015
+Month=1
+Day=21

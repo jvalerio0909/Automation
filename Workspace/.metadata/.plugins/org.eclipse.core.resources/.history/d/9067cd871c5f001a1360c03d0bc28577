@@ -1,0 +1,14 @@
+package PageObjects;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+
+import Utilities.Utilities;
+
+public class UsersPOM extends Utilities{
+	
+	public WebElement usernameTxt() {
+		return driver.findElement(By.id("user_email"));
+	}
+
+}

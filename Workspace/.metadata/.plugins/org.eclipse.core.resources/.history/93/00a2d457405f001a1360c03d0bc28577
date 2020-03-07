@@ -1,0 +1,72 @@
+package PageObjects;
+
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+
+import Utilities.Utilities;
+
+public class EmployeesListPOM extends Utilities{
+	
+	public WebElement employeesTab() {
+		return driver.findElement(By.linkText("Employees Information"));
+	}
+	
+	public WebElement createEmployeesLink() {
+		return driver.findElement(By.linkText("Create a new employee"));
+	}
+	
+	public List<WebElement> searchAndReturnRow(String leaderName){
+	WebElement table_element = driver.findElement(By.xpath("//*[@id=\"content\"]/table"));
+	List<WebElement> filaSelected = null;
+	List<WebElement> filas_collection = table_element.findElements(By.xpath("//*[@id=\"content\"]/table/tbody/tr"));
+	// System.out.println("number of rows: " + filas_collection.size());
+	int row_num, col_num;
+	row_num = 1;
+	for (WebElement trElement : filas_collection) {
+		List<WebElement> column_collection = trElement.findElements(By.xpath("td"));
+		col_num = 1;
+		for (WebElement tdElement : column_collection) {
+			if (tdElement.getText().equals(leaderName)) {
+				System.out.println("El usuario esta en la fila: " + row_num + ", leader=" + tdElement.getText());
+				filaSelected = driver.findElements(By.xpath("//*[@id=\"content\"]/table/tbody/tr[" + row_num + "]"));
+				System.out.print("User added:");
+				for(int i = 0; i < filaSelected.size(); i++) {   
+				    System.out.print(filaSelected.get(i).getText()); 
+				}
+				break;
+			}
+			col_num++;
+		}
+		row_num++;
+	}
+	 return filaSelected;
+	}
+	
+	public int rowNumber(String leaderName){
+		WebElement table_element = driver.findElement(By.xpath("//*[@id=\"content\"]/table"));
+		List<WebElement> filaSelected = null;
+		int numRowSelected=0;
+		List<WebElement> filas_collection = table_element.findElements(By.xpath("//*[@id=\"content\"]/table/tbody/tr"));
+		int row_num, col_num;
+		row_num = 1;
+		for (WebElement trElement : filas_collection) {
+			List<WebElement> column_collection = trElement.findElements(By.xpath("td"));
+			col_num = 1;
+			for (WebElement tdElement : column_collection) {
+				if (tdElement.getText().equals(leaderName)) {
+					numRowSelected=row_num; 
+					System.out.println("Numero de fila asignado a la variable");
+					break;
+				}
+				col_num++;
+			}
+			row_num++;
+		}
+		 return numRowSelected;
+		}
+	
+	
+
+}

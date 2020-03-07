@@ -1,0 +1,12 @@
+package PageObjects;
+import Utilities.Utilities;
+
+public class LoginPOM extends Utilities{
+
+		//Menu
+		
+		public WebElement MasAlimentosBtn() {
+			return driver.findElement(By.id("masA"));
+		}
+
+}

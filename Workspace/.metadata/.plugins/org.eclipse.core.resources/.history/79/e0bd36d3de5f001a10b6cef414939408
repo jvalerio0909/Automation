@@ -1,0 +1,180 @@
+package Steps;
+
+import java.awt.AWTException;
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+
+import org.testng.Assert;
+import Model.Employee;
+import PageObjects.EmployeesListPOM;
+import PageObjects.HomePOM;
+import PageObjects.LoginPOM;
+import PageObjects.NewEmployeePOM;
+import Utilities.Utilities;
+import cucumber.api.java.en.Given;
+
+public class UserSteps extends Utilities {
+
+	// Config
+	private Properties prop = new Properties();
+	private FileInputStream objfile;
+
+	// Datadriven
+	private static Properties propData = new Properties();
+	private FileInputStream objfileData;
+
+	// POM Objects Creation
+	private static LoginPOM loginP = new LoginPOM();
+	private static HomePOM homeP = new HomePOM();
+	private static EmployeesListPOM employeesP = new EmployeesListPOM();
+	private static NewEmployeePOM newemplP = new NewEmployeePOM();
+
+	@Given("^Open the browser and start application$")
+	public void setUp() throws IOException {
+		objfile = new FileInputStream(System.getProperty("user.dir") + "\\src\\config.properties");
+		prop.load(objfile);
+		objfileData = new FileInputStream(System.getProperty("user.dir") + "\\src\\Datadriven\\Data.properties");
+		propData.load(objfileData);
+		driver.get(prop.getProperty("BaseURL"));
+		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+
+	}
+
+	public void tearDown() {
+		driver.quit();
+	}
+
+	public static void EnterLoginAndPassword() throws AWTException {
+		System.out.println("---LoginTest Execution Started---");
+
+		// var assignment
+		String username = propData.getProperty("Username");
+		String password = propData.getProperty("Password");
+		String accountName = propData.getProperty("AccountName");
+
+		// actions
+		loginP.usernameTxt().sendKeys(username);
+		loginP.passwordTxt().sendKeys(password);
+		loginP.signInBtn().click();
+		wait(2000);
+	}
+	
+	public static void ValidateLoginSuccess() throws AWTException {
+		String accountName = propData.getProperty("AccountName");
+		
+		// Validating login successful
+		Assert.assertTrue(homeP.logoImg().isDisplayed(), "The image didn't display");
+		Assert.assertTrue(homeP.userInfoLb().getText().contains("Welcome " + accountName),
+				"The account name is incorrect");
+		Assert.assertEquals(homeP.sucessfulBanner().getText(), "Signed in successfully.", "The banner didn't display");
+
+		System.out.println("---LoginTest Execution Finished---");
+	}
+	
+	//---------------------------------------------------------------------------------------
+
+	public static void CreateUserTest() throws AWTException {
+		System.out.println("---CreateUserTest Execution Started---");
+
+		// var assignment
+		String firstName = propData.getProperty("Firstname");
+		String lastName = propData.getProperty("Lastname");
+		String email = propData.getProperty("Email");
+		String identificacion = propData.getProperty("Identification");
+		String leaderName = propData.getProperty("LeaderName");
+		String year = propData.getProperty("Year");
+		String month = propData.getProperty("Month");
+		String day = propData.getProperty("Day");
+
+		// actions
+		employeesP.employeesTab().click();
+		wait(2000);
+		scrollDown();
+		employeesP.createEmployeesLink().click();
+		wait(2000);
+
+		// new user
+		newemplP.firstNameTxt().sendKeys(firstName);
+		newemplP.lastNameTxt().sendKeys(lastName);
+		newemplP.emailTxt().sendKeys(email);
+		newemplP.idTxt().sendKeys(identificacion);
+		newemplP.leaderNameTxt().sendKeys(leaderName);
+		SelectComboBox(newemplP.anio(), year);
+		SelectComboBox(newemplP.month(), month);
+		SelectComboBox(newemplP.day(), day);
+		newemplP.submitBtn().click();
+		wait(2000);
+		Assert.assertEquals(newemplP.confirmMsj().getText(), "Employee was successfully created.",
+				"Message is different");
+		System.out.println("---CreateUserTestExecution Finished---");
+	}
+
+	public static void ValidateUserTest() throws AWTException {
+		System.out.println("---ValidateUserTest Execution Started---");
+
+		// var assignment
+		String firstName = propData.getProperty("Firstname");
+		String lastName = propData.getProperty("Lastname");
+		String identificacion = propData.getProperty("Identification");
+		String leaderName = propData.getProperty("LeaderName");
+		String year = propData.getProperty("Year");
+		String month = propData.getProperty("Month");
+		String day = propData.getProperty("Day");
+
+		// actions
+		employeesP.employeesTab().click();
+
+		// Row Returning Validations
+		int row = employeesP.searchPosition(leaderName); // primero busca la fila en la que el empleado se encuentra
+		if (row > 0) { // Valida que no sea -1, si es -1 el empleado no existe
+			Employee emp = employeesP.returnEmployee(row);
+
+			// validating row
+			Assert.assertTrue(emp.getFirstName().contains(firstName), "The first name didn't add correctly");
+			Assert.assertTrue(emp.getLastName().contains(lastName), "The last name didn't add correctly");
+			Assert.assertTrue(emp.getIdentification().contains(identificacion),
+					"The identification didn't add correctly");
+			Assert.assertTrue(emp.getLeaderName().contains(leaderName), "The leader name didn't add correctly");
+			Assert.assertTrue(emp.getDate().contains(year), "The year didn't add correctly");
+			Assert.assertTrue(emp.getDate().contains(month), "The month didn't add correctly");
+			Assert.assertTrue(emp.getDate().contains(day), "The day didn't add correctly");
+
+			System.out.println(emp.toString()); // Imprime datos del empleado que se busco
+		} else {
+			System.out.print("User didn't find it");
+		}
+
+		System.out.println("---ValidateUserTest Execution Finished---");
+	}
+
+	public static void DeleteUserTest() throws AWTException {
+		System.out.println("---DeleteUserTest Execution Started---");
+
+		// var assignment
+		String leaderName = propData.getProperty("LeaderName");
+
+		// Deleting the row
+		int row = employeesP.searchPosition(leaderName); // primero busca la fila en la que el empleado se encuentra
+		if (row > 0) {
+			employeesP.deleteEmployee(row).click();
+			wait(1000);
+			Robot robot = new Robot();
+			robot.keyPress(KeyEvent.VK_ENTER);
+			robot.keyRelease(KeyEvent.VK_ENTER);
+			System.out.println("---User Eliminated---");
+		} else {
+			System.out.println("Employee does not exist");
+		}
+
+		// Validating user deleted
+		int userSearch = employeesP.searchPosition(leaderName);
+		Assert.assertEquals(userSearch, -1, "User is still in the table");
+
+		System.out.println("---DeleteUserTest Execution Finished---");
+	}
+
+}

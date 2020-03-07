@@ -1,0 +1,11 @@
+--LoginTest--
+Username=gap-automation-test@mailinator.com
+Password=12345678
+AccountName=gap
+
+--CreateUserTest--
+Firstname=James Smith
+Lastname=234567890
+Email=jsmith@gmail.com
+Identification=1234567890
+LeaderName=

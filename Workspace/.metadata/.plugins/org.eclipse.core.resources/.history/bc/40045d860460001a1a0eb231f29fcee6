@@ -1,0 +1,11 @@
+Feature: Test Users
+
+Scenario: Do login in the application
+	Given Open the browser and start application
+	When I enter a username and a password
+	Then the user should do login successfully
+	
+Scenario: Create new user
+	Given I do click in create a new user
+	When I enter information in the new user textfields
+	Then I verify confirmation message

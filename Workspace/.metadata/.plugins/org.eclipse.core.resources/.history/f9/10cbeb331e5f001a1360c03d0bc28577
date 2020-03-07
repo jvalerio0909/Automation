@@ -1,0 +1,16 @@
+package PageObjects;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+
+import Utilities.Utilities;
+
+public class EmployeesListPOM extends Utilities{
+	
+	public WebElement administrativeTab() {
+		return driver.findElement(By.linkText("Employees Information"));
+	}
+	
+	
+
+}
